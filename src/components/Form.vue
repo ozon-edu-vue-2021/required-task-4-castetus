@@ -12,7 +12,11 @@
       name="gender"
     ></radio-input>
     <h2 class="form__heading">Паспортные данные</h2>
-    <select-input label="Гражданство" :options="citizenships"></select-input>
+    <select-input
+      label="Гражданство"
+      :options="citizenships"
+      textField="nationality"
+    ></select-input>
     <template>
       <text-input :date="false" label="Серия паспорта" width="20"></text-input>
       <text-input :date="false" label="Номер паспорта" width="20"></text-input>
@@ -28,12 +32,14 @@
       <text-input :date="false" label="Номер паспорта" width="20"></text-input>
       <select-input
         label="Страна выдачи"
+        textField="nationality"
         :options="citizenships"
         width="20"
       ></select-input>
       <select-input
         width="50"
         label="Тип паспорта"
+        textField="type"
         :options="passportTypes"
       ></select-input>
     </template>
