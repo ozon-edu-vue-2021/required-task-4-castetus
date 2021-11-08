@@ -2,7 +2,14 @@
   <div class="input-group input-group_radio">
     <h4 class="form__heading form__heading_small">{{ heading }}</h4>
     <div class="input-group__button" v-for="option in options" :key="option.id">
-      <input type="radio" :name="name" id="" />
+      <input
+        type="radio"
+        :name="name"
+        id=""
+        v-model="selectedValue"
+        :value="option.value"
+        @change="select"
+      />
       <label for="input-group__label_radio">{{ option.label }}</label>
     </div>
   </div>
@@ -15,6 +22,22 @@ export default {
     name: String,
     heading: String,
     options: Array,
+    defaultValue: Boolean || String,
+  },
+  data() {
+    return {
+      selectedValue: null,
+    };
+  },
+  created() {
+    if (this.defaultValue !== undefined) {
+      this.selectedValue = this.defaultValue;
+    }
+  },
+  methods: {
+    select() {
+      this.$emit('input', this.selectedValue);
+    },
   },
 };
 </script>

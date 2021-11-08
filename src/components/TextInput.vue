@@ -1,7 +1,17 @@
 <template>
   <div class="input-group input-group_text" :style="elWidth">
-    <label for="" class="input-group__label">{{ label }}</label>
-    <input type="text" class="input-group__input" :placeholder="placeholder" />
+    <label for="" class="input-group__label" :class="{ invalid: isError }">
+      {{ label }}
+    </label>
+    <input
+      v-model="value"
+      @input="emitData"
+      @blur="validate"
+      type="text"
+      class="input-group__input"
+      :class="{ input_invalid: isError }"
+      :placeholder="placeholder"
+    />
   </div>
 </template>
 
@@ -12,15 +22,40 @@ export default {
   name: 'TextInput',
   props: {
     label: String,
-    placeholder: String,
     width: String,
     isDate: Boolean,
+    reg: RegExp,
   },
   mixins: [widthMixin],
   data() {
     return {
       value: '',
+      isError: false,
     };
+  },
+  computed: {
+    placeholder() {
+      return this.isDate ? 'дд.мм.гггг' : '';
+    },
+  },
+  methods: {
+    emitData() {
+      this.$emit('input', this.value);
+    },
+    validate() {
+      if (this.isDate) {
+        this.isError = !this.checkDate();
+      } else {
+        this.isError = !this.value.match(this.reg);
+      }
+    },
+    checkDate() {
+      const date = Date.parse(this.value);
+      if (!isNaN(date) && date < Date.now()) {
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>
@@ -40,5 +75,12 @@ export default {
     border-radius: 5px;
     outline: none;
   }
+}
+.invalid {
+  color: red;
+}
+.input_invalid {
+  color: red;
+  border-color: red;
 }
 </style>

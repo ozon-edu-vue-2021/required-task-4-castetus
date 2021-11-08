@@ -7,9 +7,9 @@
     <label for="" class="input-group__label">{{ label }}</label>
     <input
       type="text"
-      class="input-group__input"
       ref="input"
-      v-model="searchString"
+      class="input-group__input select-input__field"
+      @input="setValue($event)"
       @focus="open()"
     />
     <ul class="select-input__list" v-show="isOpen">
@@ -17,7 +17,7 @@
         class="select-input__list-item"
         v-for="option in visibleOptions"
         :key="option.id"
-        @click="select(option.id)"
+        @click="select(option)"
       >
         {{ option[textField] }}
       </li>
@@ -28,6 +28,7 @@
 <script>
 import { widthMixin } from '../mixins';
 import ClickOutside from 'vue-click-outside';
+// import { debounce } from '../debounce';
 
 export default {
   name: 'SelectInput',
@@ -50,25 +51,35 @@ export default {
   },
   computed: {
     visibleOptions() {
+      if (!this.searchString) {
+        return this.options;
+      }
       return this.options.filter((option) =>
-        option.nationality
+        option[this.textField]
           ?.toLowerCase()
           .includes(this.searchString.toLowerCase())
       );
     },
   },
   methods: {
-    select(id) {
-      this.searchString = this.options.find(
-        (option) => option.id === id
-      )?.nationality;
+    select(selected) {
+      this.searchString = this.options.find((option) => option === selected)[
+        this.textField
+      ];
+      this.$refs.input.value = this.searchString;
       this.close();
+      this.$emit('select', selected.id);
     },
     open() {
+      this.$refs.input.value = '';
+      this.searchString = '';
       this.isOpen = true;
     },
     close() {
       this.isOpen = false;
+    },
+    setValue(ev) {
+      this.searchString += ev.data;
     },
   },
 };
