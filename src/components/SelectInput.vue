@@ -4,12 +4,14 @@
     :style="elWidth"
     v-click-outside="close"
   >
+    <!-- <button @click.prevent="debounce">test</button> -->
     <label for="" class="input-group__label">{{ label }}</label>
     <input
       type="text"
       ref="input"
       class="input-group__input select-input__field"
-      @input="setValue($event)"
+      @input="setVisibleOptions($event)"
+      v-model="searchString"
       @focus="open()"
     />
     <ul class="select-input__list" v-show="isOpen">
@@ -46,22 +48,21 @@ export default {
     return {
       isOpen: false,
       searchString: '',
-      test: 'test',
+      visibleOptions: [],
     };
   },
-  computed: {
-    visibleOptions() {
-      if (!this.searchString) {
-        return this.options;
-      }
-      return this.options.filter((option) =>
+  created() {
+    this.visibleOptions = JSON.parse(JSON.stringify(this.options));
+  },
+  methods: {
+    setVisibleOptions(ev) {
+      console.log(ev);
+      this.visibleOptions = this.options.filter((option) =>
         option[this.textField]
           ?.toLowerCase()
           .includes(this.searchString.toLowerCase())
       );
     },
-  },
-  methods: {
     select(selected) {
       this.searchString = this.options.find((option) => option === selected)[
         this.textField
@@ -79,7 +80,7 @@ export default {
       this.isOpen = false;
     },
     setValue(ev) {
-      this.searchString += ev.data;
+      console.log(ev);
     },
   },
 };
