@@ -4,13 +4,12 @@
     :style="elWidth"
     v-click-outside="close"
   >
-    <!-- <button @click.prevent="debounce">test</button> -->
     <label for="" class="input-group__label">{{ label }}</label>
     <input
       type="text"
       ref="input"
       class="input-group__input select-input__field"
-      @input="setVisibleOptions($event)"
+      @input="setValue()"
       v-model="searchString"
       @focus="open()"
     />
@@ -30,7 +29,7 @@
 <script>
 import { widthMixin } from '../mixins';
 import ClickOutside from 'vue-click-outside';
-// import { debounce } from '../debounce';
+import { debounce } from '../debounce';
 
 export default {
   name: 'SelectInput',
@@ -55,8 +54,7 @@ export default {
     this.visibleOptions = JSON.parse(JSON.stringify(this.options));
   },
   methods: {
-    setVisibleOptions(ev) {
-      console.log(ev);
+    setVisibleOptions() {
       this.visibleOptions = this.options.filter((option) =>
         option[this.textField]
           ?.toLowerCase()
@@ -79,8 +77,9 @@ export default {
     close() {
       this.isOpen = false;
     },
-    setValue(ev) {
-      console.log(ev);
+    setValue() {
+      const deb = debounce(this.setVisibleOptions, 3000);
+      deb();
     },
   },
 };
