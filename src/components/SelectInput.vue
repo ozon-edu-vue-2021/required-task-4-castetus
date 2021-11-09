@@ -31,6 +31,8 @@ import { widthMixin } from '../mixins';
 import ClickOutside from 'vue-click-outside';
 import { debounce } from '../debounce';
 
+const DEBOUNCE_DELAY = 1000;
+
 export default {
   name: 'SelectInput',
   props: {
@@ -62,9 +64,9 @@ export default {
       );
     },
     select(selected) {
-      this.searchString = this.options.find((option) => option === selected)[
-        this.textField
-      ];
+      this.searchString = this.options.find(
+        (option) => option.id === selected.id
+      )[this.textField];
       this.$refs.input.value = this.searchString;
       this.close();
       this.$emit('select', selected.id);
@@ -78,7 +80,7 @@ export default {
       this.isOpen = false;
     },
     setValue() {
-      const deb = debounce(this.setVisibleOptions, 3000);
+      const deb = debounce(this.setVisibleOptions, DEBOUNCE_DELAY);
       deb();
     },
   },
